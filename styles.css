@@ -20,3 +20,10 @@
     background-color: red;
     /* Color de la vida faltante */
 }
+
+.fightContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
