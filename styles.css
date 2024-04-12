@@ -1,0 +1,22 @@
+.healthBar {
+    width: 200px;
+    /* Ancho de la barra de vida */
+    height: 20px;
+    /* Altura de la barra de vida */
+    border: 1px solid #000;
+    /* Borde de la barra de vida */
+
+    display: flex;
+}
+
+.healthBar .health {
+    height: 100%;
+    background-color: green;
+    /* Color de la vida actual */
+}
+
+.healthBar .damage {
+    height: 100%;
+    background-color: red;
+    /* Color de la vida faltante */
+}
