@@ -83,7 +83,9 @@ function updateHealthBar(character) {
     const healthBarElement = document.getElementById(`${character.name.toLowerCase()}HealthBar`);
     const healthPercentage = (character.health / character.maxhealth) * 100;
     const damagePercentage = 100 - healthPercentage;
-    healthBarElement.innerHTML = `
+    var charHealth = document.getElementById(`${character.name.toLowerCase()}Health`)
+    charHealth.innerHTML = `${character.health} / ${character.maxhealth} HP`
+    healthBarElement.innerHTML = `  
       <div class="health" style="width: ${healthPercentage}%;"></div>
       <div class="damage" style="width: ${damagePercentage}%;"></div>
     `;
