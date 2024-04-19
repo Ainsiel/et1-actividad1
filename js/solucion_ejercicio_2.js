@@ -18,7 +18,7 @@ class Character {
     attack(target) {
         createText(`${this.name} deals ${this.damage} DMG to ${target.name}`)
         target.health -= this.damage;
-        if(target.health < 0){
+        if (target.health < 0) {
             target.health = 0
         }
 
@@ -38,7 +38,7 @@ function fight(firstCharacter, secondCharacter) {
     createText(hero.status())
     createText(enemy.status())
     // Manejar el evento de presionar una tecla
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         // Verificar si se presionó la tecla 'x'
         if (event.key === 'x') {
             if (firstCharacter.isAlive()) {
@@ -105,5 +105,106 @@ alert(`${enemy.name} tiene ${enemy.maxhealth} HP`);
 updateHealthBar(hero);
 updateHealthBar(enemy);
 
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth * 0.8; // Ancho del rectángulo
+    canvas.height = window.innerHeight * 0.8; // Alto del rectángulo
+
+    const squareSize = 50; // Tamaño de los cuadrados
+
+    const player1 = {
+        x: 50,
+        y: 50,
+        color: 'blue'
+    };
+
+    const player2 = {
+        x: canvas.width - 50,
+        y: canvas.height - 50,
+        color: 'red'
+    };
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar rectángulo
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar jugador 1 (WASD)
+        ctx.fillStyle = player1.color;
+        ctx.fillRect(player1.x, player1.y, squareSize, squareSize);
+
+        // Dibujar jugador 2 (flechas)
+        ctx.fillStyle = player2.color;
+        ctx.fillRect(player2.x, player2.y, squareSize, squareSize);
+    }
+
+    function checkBounds(player) {
+        if (player.x < 0) {
+            player.x = 0;
+        }
+        if (player.x + squareSize > canvas.width) {
+            player.x = canvas.width - squareSize;
+        }
+        if (player.y < 0) {
+            player.y = 0;
+        }
+        if (player.y + squareSize > canvas.height) {
+            player.y = canvas.height - squareSize;
+        }
+    }
+
+    function movePlayer1(key) {
+        switch (key) {
+            case 'KeyW':
+                player1.y -= 10;
+                break;
+            case 'KeyA':
+                player1.x -= 10;
+                break;
+            case 'KeyS':
+                player1.y += 10;
+                break;
+            case 'KeyD':
+                player1.x += 10;
+                break;
+        }
+        checkBounds(player1);
+        draw();
+    }
+
+    function movePlayer2(key) {
+        switch (key) {
+            case 'ArrowUp':
+                player2.y -= 10;
+                break;
+            case 'ArrowLeft':
+                player2.x -= 10;
+                break;
+            case 'ArrowDown':
+                player2.y += 10;
+                break;
+            case 'ArrowRight':
+                player2.x += 10;
+                break;
+        }
+        checkBounds(player2);
+        draw();
+    }
+
+    document.addEventListener('keydown', function (event) {
+        movePlayer1(event.code);
+        movePlayer2(event.code);
+    });
+
+    draw();
+});
+
+
 //Comenzar combate
 fight(hero, enemy);
+
+

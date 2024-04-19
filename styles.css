@@ -21,9 +21,15 @@
     /* Color de la vida faltante */
 }
 
-.fightContainer{
+.fightContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+canvas {
+    display: block;
+    background-color: #f0f0f0;
+    margin: auto;
 }
