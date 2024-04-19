@@ -21,7 +21,6 @@ class Character {
         if (target.health < 0) {
             target.health = 0
         }
-
         updateHealthBar(target);
     }
 
@@ -33,7 +32,6 @@ class Character {
 
 //Función para combatir
 function fight(firstCharacter, secondCharacter) {
-
     createText("Empieza el combate!")
     createText(hero.status())
     createText(enemy.status())
@@ -101,7 +99,6 @@ alert(`${hero.name} tiene ${hero.maxhealth} HP`);
 const enemy = new Character("Limo", enemyMaxHealth, enemyAttk);
 alert(`${enemy.name} tiene ${enemy.maxhealth} HP`);
 
-
 updateHealthBar(hero);
 updateHealthBar(enemy);
 
@@ -127,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function draw() {
+        requestAnimationFrame(draw);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Dibujar rectángulo
@@ -141,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.fillStyle = player2.color;
         ctx.fillRect(player2.x, player2.y, squareSize, squareSize);
     }
+    draw();
 
     function checkBounds(player) {
         if (player.x < 0) {
@@ -196,10 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.addEventListener('keydown', function (event) {
-        movePlayer1(event.code);
-        movePlayer2(event.code);
+        movePlayer1(event.key);
+        movePlayer2(event.key);
     });
-
     draw();
 });
 
