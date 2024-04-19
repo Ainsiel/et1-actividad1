@@ -13,7 +13,6 @@ class Character {
     isAlive() {
         return this.health > 0;
     }
-
     //Ataca a otro personaje seleccionado
     attack(target) {
         createText(`${this.name} deals ${this.damage} DMG to ${target.name}`)
@@ -23,18 +22,31 @@ class Character {
         }
         updateHealthBar(target);
     }
-
     //Retorna la información actual del personaje
     status() {
         return `${this.name} - HP ${this.health}/${this.maxhealth}`;
     }
 }
 
+//Creación de personajes
+const heroMaxHealth = Math.floor(Math.random() * 100) + 1;
+const enemyMaxHealth = Math.floor(Math.random() * 100) + 1;
+const heroAttk = Math.floor(Math.random() * 6) + 5;
+const enemyAttk = Math.floor(Math.random() * 6) + 5;
+const hero = new Character("Heroe", heroMaxHealth, heroAttk);
+alert(`${hero.name} tiene ${hero.maxhealth} HP y ${hero.damage} ATK `);
+const enemy = new Character("Limo", enemyMaxHealth, enemyAttk);
+alert(`${enemy.name} tiene ${enemy.maxhealth} HP y ${enemy.damage} ATK `);
+
+updateHealthBar(hero);
+updateHealthBar(enemy);
+
 //Función para combatir
 function fight(firstCharacter, secondCharacter) {
     createText("Empieza el combate!")
     createText(hero.status())
     createText(enemy.status())
+    
     // Manejar el evento de presionar una tecla
     document.addEventListener('keydown', function (event) {
         // Verificar si se presionó la tecla 'x'
@@ -89,25 +101,12 @@ function updateHealthBar(character) {
     `;
 }
 
-//Creación de personajes
-const heroMaxHealth = Math.floor(Math.random() * 100) + 1;
-const enemyMaxHealth = Math.floor(Math.random() * 100) + 1;
-const heroAttk = Math.floor(Math.random() * 6) + 5;
-const enemyAttk = Math.floor(Math.random() * 6) + 5;
-const hero = new Character("Heroe", heroMaxHealth, heroAttk);
-alert(`${hero.name} tiene ${hero.maxhealth} HP`);
-const enemy = new Character("Limo", enemyMaxHealth, enemyAttk);
-alert(`${enemy.name} tiene ${enemy.maxhealth} HP`);
-
-updateHealthBar(hero);
-updateHealthBar(enemy);
-
 document.addEventListener("DOMContentLoaded", function () {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth * 0.8; // Ancho del rectángulo
-    canvas.height = window.innerHeight * 0.8; // Alto del rectángulo
+    canvas.width = window.innerWidth * 0.6; // Ancho del rectángulo
+    canvas.height = window.innerHeight * 0.6; // Alto del rectángulo
 
     const squareSize = 50; // Tamaño de los cuadrados
 
@@ -193,16 +192,12 @@ document.addEventListener("DOMContentLoaded", function () {
         checkBounds(player2);
         draw();
     }
-
     document.addEventListener('keydown', function (event) {
-        movePlayer1(event.key);
-        movePlayer2(event.key);
+        movePlayer1(event.code);
+        movePlayer2(event.code);
     });
     draw();
 });
 
-
 //Comenzar combate
 fight(hero, enemy);
-
-
