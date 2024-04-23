@@ -1,82 +1,29 @@
-//Ejercicio de practica Javascript
-
-//Objeto base para los personajes
 class Character {
-    constructor(name, health, damage) {
-        //Atributos
+    constructor(x, y, width, height, color, name, health, damage) {
+        this.x = x
+        this.y = y
+        this.width = width
+        this.height = height
+        this.color = color
         this.name = name;
         this.health = health;
         this.maxhealth = health;
         this.damage = damage;
     }
-    //Verifica si el personaje esta vivo
+
     isAlive() {
         return this.health > 0;
     }
 
-    //Ataca a otro personaje seleccionado
     attack(target) {
-        createText(`${this.name} deals ${this.damage} DMG to ${target.name}`)
         target.health -= this.damage;
+        console.log("Target HP: ", target.health)
         if (target.health < 0) {
             target.health = 0
         }
 
         updateHealthBar(target);
     }
-
-    //Retorna la información actual del personaje
-    status() {
-        return `${this.name} - HP ${this.health}/${this.maxhealth}`;
-    }
-}
-
-//Función para combatir
-function fight(firstCharacter, secondCharacter) {
-
-    createText("Empieza el combate!")
-    createText(hero.status())
-    createText(enemy.status())
-    // Manejar el evento de presionar una tecla
-    document.addEventListener('keydown', function (event) {
-        // Verificar si se presionó la tecla 'x'
-        if (event.key === 'x') {
-            if (firstCharacter.isAlive()) {
-                firstCharacter.attack(secondCharacter);
-                createText(hero.status());
-                createText(enemy.status());
-            } else {
-                createText(`${firstCharacter.name} died!`);
-            }
-        }
-        // Verificar si se presionó la tecla 'n'
-        else if (event.key === 'n') {
-            if (secondCharacter.isAlive()) {
-                secondCharacter.attack(firstCharacter);
-                createText(hero.status());
-                createText(enemy.status());
-            } else {
-                createText(`${secondCharacter.name} died!`);
-            }
-        }
-    });
-}
-
-function createText(s) {
-    //Seleccionar el elemento padre
-    var container = document.getElementById("container");
-
-    //Crear un nuevo elemento párrafo
-    var newP = document.createElement("p");
-
-    //Crear un nodo de texto con el string 's'
-    var text = document.createTextNode(s);
-
-    //Añadir el nodo de texto al elemento párrafo
-    newP.appendChild(text);
-
-    //Añadir el elemento párrafo al elemento padre
-    container.appendChild(newP);
 }
 
 function updateHealthBar(character) {
@@ -91,120 +38,152 @@ function updateHealthBar(character) {
     `;
 }
 
-//Creación de personajes
-const heroMaxHealth = Math.floor(Math.random() * 100) + 1;
-const enemyMaxHealth = Math.floor(Math.random() * 100) + 1;
-const heroAttk = Math.floor(Math.random() * 6) + 5;
-const enemyAttk = Math.floor(Math.random() * 6) + 5;
-const hero = new Character("Heroe", heroMaxHealth, heroAttk);
-alert(`${hero.name} tiene ${hero.maxhealth} HP`);
-const enemy = new Character("Limo", enemyMaxHealth, enemyAttk);
-alert(`${enemy.name} tiene ${enemy.maxhealth} HP`);
-
-
-updateHealthBar(hero);
-updateHealthBar(enemy);
-
 document.addEventListener("DOMContentLoaded", function () {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth * 0.8; // Ancho del rectángulo
-    canvas.height = window.innerHeight * 0.8; // Alto del rectángulo
+    canvas.width = window.innerWidth * 0.8;
+    canvas.height = window.innerHeight * 0.8;
 
-    const squareSize = 50; // Tamaño de los cuadrados
+    const squareSize = 50;
 
-    const player1 = {
-        x: 50,
-        y: 50,
-        color: 'blue'
-    };
+    const heroMaxHealth = Math.floor(Math.random() * 60) + 40;
+    const enemyMaxHealth = Math.floor(Math.random() * 60) + 40;
+    const heroAttk = Math.floor(Math.random() * 6) + 5;
+    const enemyAttk = Math.floor(Math.random() * 6) + 5;
 
-    const player2 = {
-        x: canvas.width - 50,
-        y: canvas.height - 50,
-        color: 'red'
-    };
+    const hero = new Character(
+        50,
+        50,
+        squareSize,
+        squareSize,
+        'blue',
+        "Heroe",
+        heroMaxHealth,
+        heroAttk);
+
+    const limo = new Character(
+        canvas.width - 100,
+        canvas.height - 100,
+        squareSize,
+        squareSize,
+        'red',
+        "Limo",
+        enemyMaxHealth,
+        enemyAttk
+    );
+
+    updateHealthBar(hero)
+    updateHealthBar(limo)
+    alert(`${hero.name} tiene ${hero.maxhealth} HP, ${hero.damage} ATTK`);
+    alert(`${limo.name} tiene ${limo.maxhealth} HP, ${limo.damage} ATTK`);
+
+    function drawCharacter(character) {
+        ctx.fillStyle = character.color;
+        ctx.fillRect(character.x, character.y, character.width, character.height);
+    }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Dibujar rectángulo
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-        // Dibujar jugador 1 (WASD)
-        ctx.fillStyle = player1.color;
-        ctx.fillRect(player1.x, player1.y, squareSize, squareSize);
-
-        // Dibujar jugador 2 (flechas)
-        ctx.fillStyle = player2.color;
-        ctx.fillRect(player2.x, player2.y, squareSize, squareSize);
+        drawCharacter(hero);
+        drawCharacter(limo);
     }
 
-    function checkBounds(player) {
-        if (player.x < 0) {
-            player.x = 0;
-        }
-        if (player.x + squareSize > canvas.width) {
-            player.x = canvas.width - squareSize;
-        }
-        if (player.y < 0) {
-            player.y = 0;
-        }
-        if (player.y + squareSize > canvas.height) {
-            player.y = canvas.height - squareSize;
+    function checkCollision(character1, character2) {
+        return character1.x < character2.x + character2.width &&
+            character1.x + character1.width > character2.x &&
+            character1.y < character2.y + character2.height &&
+            character1.y + character1.height > character2.y;
+    }
+
+    let damageInterval;
+
+    function startDamageInterval() {
+        damageInterval = setInterval(function () {
+            if (hero.isAlive() && limo.isAlive() && checkCollision(hero, limo)) {
+                hero.attack(limo);
+                limo.attack(hero);
+            }
+        }, 1000);
+    }
+
+    function stopDamageInterval() {
+        clearInterval(damageInterval);
+    }
+
+    function handleCollision() {
+        if (checkCollision(hero, limo)) {
+            if (hero.isAlive() && limo.isAlive()) {
+                startDamageInterval();
+            }
+        } else {
+            stopDamageInterval();
         }
     }
 
-    function movePlayer1(key) {
+    function moveHero(key) {
         switch (key) {
             case 'KeyW':
-                player1.y -= 10;
+                hero.y -= 10;
                 break;
             case 'KeyA':
-                player1.x -= 10;
+                hero.x -= 10;
                 break;
             case 'KeyS':
-                player1.y += 10;
+                hero.y += 10;
                 break;
             case 'KeyD':
-                player1.x += 10;
+                hero.x += 10;
                 break;
         }
-        checkBounds(player1);
-        draw();
+        checkBounds(hero);
     }
 
-    function movePlayer2(key) {
+    function checkBounds(character) {
+        if (character.x < 0) {
+            character.x = 0;
+        }
+        if (character.x + character.width > canvas.width) {
+            character.x = canvas.width - character.width;
+        }
+        if (character.y < 0) {
+            character.y = 0;
+        }
+        if (character.y + character.height > canvas.height) {
+            character.y = canvas.height - character.height;
+        }
+    }
+
+    function moveLimo(key) {
         switch (key) {
             case 'ArrowUp':
-                player2.y -= 10;
+                limo.y -= 10;
                 break;
             case 'ArrowLeft':
-                player2.x -= 10;
+                limo.x -= 10;
                 break;
             case 'ArrowDown':
-                player2.y += 10;
+                limo.y += 10;
                 break;
             case 'ArrowRight':
-                player2.x += 10;
+                limo.x += 10;
                 break;
         }
-        checkBounds(player2);
+        checkBounds(limo);
+    }
+
+    function gameLoop() {
+        handleCollision();
         draw();
+        requestAnimationFrame(gameLoop);
     }
 
     document.addEventListener('keydown', function (event) {
-        movePlayer1(event.code);
-        movePlayer2(event.code);
+        moveHero(event.code);
+        moveLimo(event.code)
     });
 
-    draw();
+    gameLoop();
 });
-
-
-//Comenzar combate
-fight(hero, enemy);
 
 
