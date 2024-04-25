@@ -78,6 +78,10 @@ document.addEventListener("DOMContentLoaded", function () {
     alert(`${hero.name} tiene ${hero.maxhealth} HP, ${hero.damage} ATTK`);
     alert(`${limo.name} tiene ${limo.maxhealth} HP, ${limo.damage} ATTK`);
 
+    let lastAttackTime = 0; // Variable para almacenar el tiempo del último ataque
+    const attackInterval = 700; // Intervalo de tiempo entre ataques en milisegundos (1 segundo)
+    let currentTime
+
     function drawCharacter(character) {
         ctx.fillStyle = character.color;
         ctx.fillRect(character.x, character.y, character.width, character.height);
@@ -96,28 +100,12 @@ document.addEventListener("DOMContentLoaded", function () {
             character1.y + character1.height > character2.y;
     }
 
-    let damageInterval;
-
-    function startDamageInterval() {
-        damageInterval = setInterval(function () {
-            if (hero.isAlive() && limo.isAlive() && checkCollision(hero, limo)) {
-                hero.attack(limo);
-                limo.attack(hero);
-            }
-        }, 1000);
-    }
-
-    function stopDamageInterval() {
-        clearInterval(damageInterval);
-    }
 
     function handleCollision() {
-        if (checkCollision(hero, limo)) {
-            if (hero.isAlive() && limo.isAlive()) {
-                startDamageInterval();
-            }
-        } else {
-            stopDamageInterval();
+        if (hero.isAlive() && limo.isAlive() && checkCollision(hero, limo) && (currentTime - lastAttackTime >= attackInterval)) {
+            hero.attack(limo);
+            limo.attack(hero);
+            lastAttackTime = currentTime;
         }
     }
 
@@ -173,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function gameLoop() {
+        currentTime  = performance.now(); // Obtener el tiempo actual en milisegundos
         handleCollision();
         draw();
         requestAnimationFrame(gameLoop);
