@@ -46,30 +46,6 @@ function fight(firstCharacter, secondCharacter) {
     createText("Empieza el combate!")
     createText(hero.status())
     createText(enemy.status())
-    
-    // Manejar el evento de presionar una tecla
-    document.addEventListener('keydown', function (event) {
-        // Verificar si se presionó la tecla 'x'
-        if (event.key === 'x') {
-            if (firstCharacter.isAlive()) {
-                firstCharacter.attack(secondCharacter);
-                createText(hero.status());
-                createText(enemy.status());
-            } else {
-                createText(`${firstCharacter.name} died!`);
-            }
-        }
-        // Verificar si se presionó la tecla 'n'
-        else if (event.key === 'n') {
-            if (secondCharacter.isAlive()) {
-                secondCharacter.attack(firstCharacter);
-                createText(hero.status());
-                createText(enemy.status());
-            } else {
-                createText(`${secondCharacter.name} died!`);
-            }
-        }
-    });
 }
 
 function createText(s) {
@@ -113,30 +89,68 @@ document.addEventListener("DOMContentLoaded", function () {
     const player1 = {
         x: 50,
         y: 50,
-        color: 'blue'
+        color: 'blue',
+        health: 100 // Agregamos salud para los jugadores
     };
 
     const player2 = {
         x: canvas.width - 50,
         y: canvas.height - 50,
-        color: 'red'
+        color: 'red',
+        health: 100
     };
+
+    let combatEnded = false; // Variable para controlar si la batalla ha terminado
 
     function draw() {
         requestAnimationFrame(draw);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
         // Dibujar rectángulo
         ctx.strokeStyle = 'black';
         ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
+    
         // Dibujar jugador 1 (WASD)
         ctx.fillStyle = player1.color;
         ctx.fillRect(player1.x, player1.y, squareSize, squareSize);
-
+    
         // Dibujar jugador 2 (flechas)
         ctx.fillStyle = player2.color;
         ctx.fillRect(player2.x, player2.y, squareSize, squareSize);
+    
+        // Verificar colisión entre jugadores
+        const collision = (
+            player1.x < player2.x + squareSize &&
+            player1.x + squareSize > player2.x &&
+            player1.y < player2.y + squareSize &&
+            player1.y + squareSize > player2.y
+        );
+    
+        if (collision) {
+            // Colisión detectada, reducir la salud de ambos jugadores
+            if (player1.health > 0 && player2.health > 0) {
+                player1.health -= 1; // Reducimos la salud en 1 para hacerlo más notorio
+                player2.health -= 1;
+                console.log("Colisión detectada, salud de ambos jugadores reducida.");
+                console.log("Salud del Jugador 1:", player1.health);
+                console.log("Salud del Jugador 2:", player2.health);
+            }
+        }
+    
+        // Verificar si alguno de los jugadores ha perdido
+        if (player1.health <= 0 || player2.health <= 0) {
+            combatEnded = true;
+        }
+    
+        // Si la batalla ha terminado, detener el movimiento y mostrar el resultado
+        if (combatEnded) {
+            document.removeEventListener('keydown', movePlayer1);
+            document.removeEventListener('keydown', movePlayer2);
+            const resultText = document.createElement("p");
+            resultText.textContent = player1.health <= 0 ? "¡El jugador 2 ganó!" : "¡El jugador 1 ganó!";
+            document.body.appendChild(resultText);
+            return; // Salir de la función draw
+        }
     }
     draw();
 
@@ -155,7 +169,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function movePlayer1(key) {
+    function movePlayer1(event) {
+        const key = event.code;
         switch (key) {
             case 'KeyW':
                 player1.y -= 10;
@@ -171,10 +186,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
         }
         checkBounds(player1);
-        draw();
     }
 
-    function movePlayer2(key) {
+    function movePlayer2(event) {
+        const key = event.code;
         switch (key) {
             case 'ArrowUp':
                 player2.y -= 10;
@@ -190,13 +205,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
         }
         checkBounds(player2);
-        draw();
     }
+
     document.addEventListener('keydown', function (event) {
-        movePlayer1(event.code);
-        movePlayer2(event.code);
+        if (!combatEnded) {
+            movePlayer1(event);
+            movePlayer2(event);
+        }
     });
-    draw();
 });
 
 //Comenzar combate
