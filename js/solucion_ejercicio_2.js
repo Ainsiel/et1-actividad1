@@ -161,10 +161,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function gameLoop() {
-        currentTime  = performance.now(); // Obtener el tiempo actual en milisegundos
+        currentTime = performance.now(); // Obtener el tiempo actual en milisegundos
         handleCollision();
         draw();
-        requestAnimationFrame(gameLoop);
+
+        // Comprueba si alguno de los personajes ha muerto.
+        if (!hero.isAlive() || !limo.isAlive()) {
+            // Detiene el game loop
+            cancelAnimationFrame(gameLoop);
+
+            // Muestra quien ha ganado
+            let message;
+            if (!hero.isAlive() && !limo.isAlive()) {
+                message = "Ambos personajes han perdido.";
+            } else if (!hero.isAlive()) {
+                message = `El personaje ${limo.name} ha ganado!`;
+            } else {
+                message = `El personaje ${hero.name} ha ganado!`;
+            }
+
+            // Muestra un mensaje de alerta de quien ha ganado
+            alert(message);
+        } else {
+            requestAnimationFrame(gameLoop);
+        }
     }
 
     document.addEventListener('keydown', function (event) {
